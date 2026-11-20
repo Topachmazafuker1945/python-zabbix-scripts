@@ -7,8 +7,11 @@ env_path = Path(__file__).resolve().parent.parent / "env_tokens/tokens.env"
 load_dotenv(dotenv_path=env_path)
 
 DOMAIN = os.getenv("ZABBIX_URL")
+USER = os.getenv("ZABBIX_USER")
+PASSWORD = os.getenv("ZABBIX_PASSWORD")
 
 api = ZabbixAPI(url=DOMAIN)
+
 api.login(user="Admin", password="zabbix")
 
 hosts = api.host.get(
@@ -24,43 +27,40 @@ hostid = hosts[0]["hostid"]
 
 cpu_items = api.item.get(
     hostids=hosts[0]["hostid"],
-    search={"key_": "system.cpu.load"},  # ищем метрики загрузки CPU
-    output=["itemid", "name", "key_", "lastvalue", "lastclock", "value_type"]
+    filter={"key_": "system.cpu.util"},
+    output=["itemid", "name", "key_", "lastvalue", "lastclock", "units"]
 )
 
 uptime_items = api.item.get(
     hostids=hosts[0]["hostid"],
-    search={"key_": "system.uptime"},  # ищем метрики загрузки CPU
-    output=["lastvalue", "lastclock", "prevvalue", "units", "value_type", "state", "error"]
+    filter={"key_": "system.uptime"},
+    output=["key_", "lastvalue", "lastclock", "prevvalue", "units", "value_type", "state", "error"]
 )
 
 memory_items = api.item.get(
     hostids=hosts[0]["hostid"],
-    search={"key_": "vm.memory.size[available]"},  # ищем метрики загрузки CPU
-    output=["lastvalue", "units", "value_type", "lastclock"]
+    filter={"key_": "vm.memory.size[available]"},
+    output=["key_", "lastvalue", "units", "value_type", "lastclock"]
 )
 
-# for item in memory_items:
-#     print(item["lastvalue"])
-#     print(item["units"])
-#     print(item["value_type"])
-#     print(item["lastclock"])
 
-# for item in uptime_items:
-#     print(item["lastvalue"])
-#     print(item["lastclock"])
-#     print(item["prevvalue"])
-#     print(item["units"])
-#     print(item["value_type"])
-#     print(item["state"])
-#     print(item["error"])
+for item in cpu_items:
+    key = item["key_"]
+    value = item["lastvalue"]
+    units = item["units"]
+    print(f"Метрика: {key} | Значение: {value} {units}")
 
-# for item in cpu_items:
-#     print(item["itemid"])
-#     print(item["name"])
-#     print(item["lastvalue"])
-#     print(item["lastclock"])
-#     print(item["value_type"])
+for item in uptime_items:
+    key = item["key_"]
+    value = item["lastvalue"]
+    units = item["units"]
+    print(f"Метрика: {key} | Значение: {value} {units}")
+
+for item in memory_items:
+    key = item["key_"]
+    value = item["lastvalue"]
+    units = item["units"]
+    print(f"Метрика: {key} | Значение: {value} {units}")
 
 # users = api.user.get(
 #     output=['userid','name']
