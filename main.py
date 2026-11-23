@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 from zabbix_utils import ZabbixAPI
 import os
 from pathlib import Path
@@ -7,12 +9,12 @@ env_path = Path(__file__).resolve().parent.parent / "env_tokens/tokens.env"
 load_dotenv(dotenv_path=env_path)
 
 DOMAIN = os.getenv("ZABBIX_URL")
-USER = os.getenv("ZABBIX_USER")
+USER_NAME = os.getenv("ZABBIX_USER")
 PASSWORD = os.getenv("ZABBIX_PASSWORD")
 
 api = ZabbixAPI(url=DOMAIN)
 
-api.login(user="Admin", password="zabbix")
+api.login(user=USER_NAME, password=PASSWORD)
 
 hosts = api.host.get(
     filter={
