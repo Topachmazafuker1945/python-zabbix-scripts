@@ -1,5 +1,3 @@
-from typing import Self
-
 from zabbix_utils import ZabbixAPI
 from telebot import TeleBot
 import os
@@ -13,7 +11,6 @@ TG_TOKEN = os.getenv("TG_BOT_TOKEN")
 ZABBIX_URL = os.getenv("ZABBIX_URL")
 USER_NAME = os.getenv("ZABBIX_USER")
 PASSWORD = os.getenv("ZABBIX_PASSWORD")
-all_commands: list[str] = ["get_cpu", "get_memory", "get_uptime"]
 
 api = ZabbixAPI(url=ZABBIX_URL)
 
